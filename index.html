@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="果木复习">
+<title>果木 · 复习</title>
+<style>
+  :root {
+    --bg: #faf9f6; --card: #ffffff; --text: #1a1a1a; --muted: #8a8578;
+    --border: #e6e2d8; --accent: #4a7c59;
+    --again: #c0564e; --hard: #c08a3e; --good: #4a7c59; --easy: #4e7ac0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1b18; --card: #262420; --text: #e8e5de; --muted: #8f8a7d;
+      --border: #3a372f; --accent: #7fb08e;
+      --again: #d97b73; --hard: #d9a963; --good: #7fb08e; --easy: #739fd9;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center;
+  }
+  header {
+    width: 100%; max-width: 620px; padding: calc(env(safe-area-inset-top, 0px) + 20px) 24px 0;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  header h1 { font-size: 16px; font-weight: 600; letter-spacing: .05em; }
+  #progress { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  main { width: 100%; max-width: 620px; padding: 16px 24px 48px; flex: 1; }
+  .panel {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 28px 26px; margin-top: 12px;
+  }
+  .tags { font-size: 12px; color: var(--muted); margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag { border: 1px solid var(--border); border-radius: 20px; padding: 1px 10px; }
+  .retry-badge { color: var(--hard); border-color: var(--hard); }
+  .question { font-size: 21px; line-height: 1.55; font-weight: 550; }
+  textarea {
+    width: 100%; margin-top: 20px; padding: 12px 14px; min-height: 76px;
+    background: var(--bg); color: var(--text); border: 1px solid var(--border);
+    border-radius: 10px; font: inherit; font-size: 16px; resize: vertical;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  .answer-block { margin-top: 22px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .label { font-size: 12px; color: var(--muted); letter-spacing: .08em; margin-bottom: 8px; }
+  .answer { font-size: 18px; line-height: 1.6; }
+  .attempt { font-size: 14px; color: var(--muted); margin-top: 14px; white-space: pre-wrap; }
+  .source { font-size: 12px; color: var(--muted); margin-top: 16px; }
+  .actions { display: flex; gap: 10px; margin-top: 20px; }
+  button {
+    flex: 1; padding: 13px 8px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--card); color: var(--text); font: inherit; font-size: 15px;
+    cursor: pointer; transition: transform .05s; -webkit-tap-highlight-color: transparent;
+  }
+  button:active { transform: scale(.97); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .grades { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 20px; }
+  .grades button { display: flex; flex-direction: column; gap: 3px; padding: 11px 4px; }
+  .grades .g-name { font-size: 14px; font-weight: 600; }
+  .grades .g-ivl { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .g1 .g-name { color: var(--again); } .g2 .g-name { color: var(--hard); }
+  .g3 .g-name { color: var(--good); } .g4 .g-name { color: var(--easy); }
+  .kbd-hint { text-align: center; font-size: 12px; color: var(--muted); margin-top: 14px; }
+  kbd {
+    border: 1px solid var(--border); border-radius: 4px; padding: 0 5px;
+    font-family: ui-monospace, monospace; font-size: 11px;
+  }
+  .center { text-align: center; padding: 48px 26px; }
+  .big { font-size: 40px; margin-bottom: 12px; }
+  .center h2 { font-size: 19px; font-weight: 600; margin-bottom: 10px; }
+  .center p { color: var(--muted); font-size: 14.5px; line-height: 1.8; }
+  .stats-line { margin-top: 18px; font-size: 13.5px; color: var(--muted); }
+  input.pin {
+    width: 100%; max-width: 240px; margin: 18px auto 0; display: block; padding: 12px 14px;
+    background: var(--bg); color: var(--text); border: 1px solid var(--border);
+    border-radius: 10px; font: inherit; font-size: 18px; text-align: center; letter-spacing: .3em;
+  }
+  input.pin:focus { outline: none; border-color: var(--accent); }
+  .pin-btn { margin-top: 16px; max-width: 240px; margin-left: auto; margin-right: auto; display: block; width: 100%; }
+</style>
+</head>
+<body>
+<header>
+  <h1>果木 · 复习</h1>
+  <span id="progress"></span>
+</header>
+<main id="app"><div class="panel center"><p>加载中…</p></div></main>
+
+<script>
+const $app = document.getElementById('app');
+const $progress = document.getElementById('progress');
+const BASE = 'https://wcqkjafveuprxxrnnqiu.supabase.co/functions/v1/review';
+let pin = localStorage.getItem('guomu_pin') || '';
+let queue = [], done = 0, total = 0, againCount = 0, stats = null;
+let current = null, revealed = false, cardFull = null;
+
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function humanIvl(d) {
+  if (d < 1) return Math.round(d * 24) + ' 小时';
+  if (d < 30) return (d < 10 ? d.toFixed(1) : Math.round(d)) + ' 天';
+  return (d / 30.4).toFixed(1) + ' 个月';
+}
+
+async function api(path, opts) {
+  opts = opts || {};
+  opts.headers = Object.assign({ 'x-pin': pin }, opts.headers || {});
+  const r = await fetch(BASE + path, opts);
+  if (r.status === 401) { renderPin(true); throw new Error('unauthorized'); }
+  if (!r.ok) throw new Error((await r.json()).error || r.status);
+  return r.json();
+}
+
+function renderPin(wrong) {
+  $progress.textContent = '';
+  $app.innerHTML = `<div class="panel center">
+    <div class="big">🔒</div>
+    <h2>${wrong ? '口令不对，再试一次' : '输入访问口令'}</h2>
+    <input class="pin" id="pin-input" type="password" inputmode="numeric" autocomplete="off">
+    <button class="primary pin-btn" id="pin-go">进入</button>
+  </div>`;
+  const input = document.getElementById('pin-input');
+  input.focus();
+  const go = () => {
+    pin = input.value.trim();
+    if (!pin) return;
+    localStorage.setItem('guomu_pin', pin);
+    start().catch(() => {});
+  };
+  document.getElementById('pin-go').onclick = go;
+  input.onkeydown = e => { if (e.key === 'Enter') go(); };
+}
+
+async function start() {
+  const s = await api('/api/session');
+  stats = s.stats;
+  queue = s.due;
+  total = queue.length; done = 0; againCount = 0;
+  total ? next() : renderEmpty();
+}
+
+function renderEmpty() {
+  $progress.textContent = '';
+  const week = stats.due_cumulative_week;
+  $app.innerHTML = `<div class="panel center">
+    <div class="big">🎉</div>
+    <h2>今天没有到期卡片</h2>
+    <p>卡片库共 ${stats.total} 张<br>明天到期 ${week[0]} 张，未来 7 天共 ${week[6]} 张</p>
+    <p class="stats-line">想学新东西？回 Claude Code 里说 <kbd>/teach</kbd></p>
+  </div>`;
+}
+
+function next() {
+  current = queue.shift();
+  if (!current) return renderDone();
+  revealed = false; cardFull = null;
+  $progress.textContent = (done + 1) + ' / ' + (total + againCount);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const tags = current.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('');
+  const retry = current.retry ? '<span class="tag retry-badge">重过 · 不计分</span>' : '';
+  $app.innerHTML = `<div class="panel">
+    <div class="tags">${retry}${tags}</div>
+    <div class="question">${esc(current.q)}</div>
+    <textarea id="attempt" placeholder="先凭记忆作答——写出来记得更牢（可留空）"></textarea>
+    <div class="actions"><button class="primary" id="reveal">显示答案</button></div>
+  </div>`;
+  document.getElementById('reveal').onclick = reveal;
+  document.getElementById('attempt').onkeydown = e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') reveal();
+  };
+}
+
+async function reveal() {
+  const attempt = document.getElementById('attempt').value.trim();
+  cardFull = await api('/api/card/' + current.id);
+  cardFull.attempt = attempt;
+  revealed = true;
+  const tags = current.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('');
+  const p = cardFull.preview;
+  const src = cardFull.source ? `<div class="source">来源：${esc(cardFull.source)}</div>` : '';
+  const att = attempt ? `<div class="attempt">你的回答：${esc(attempt)}</div>` : '';
+  const body = current.retry
+    ? `<div class="actions"><button class="primary" id="cont">继续 →</button></div>`
+    : `<div class="grades">
+        <button class="g1" data-g="1"><span class="g-name">忘了</span><span class="g-ivl">${humanIvl(p[1])}</span></button>
+        <button class="g2" data-g="2"><span class="g-name">费劲</span><span class="g-ivl">${humanIvl(p[2])}</span></button>
+        <button class="g3" data-g="3"><span class="g-name">记得</span><span class="g-ivl">${humanIvl(p[3])}</span></button>
+        <button class="g4" data-g="4"><span class="g-name">太简单</span><span class="g-ivl">${humanIvl(p[4])}</span></button>
+      </div>`;
+  $app.innerHTML = `<div class="panel">
+    <div class="tags">${tags}</div>
+    <div class="question">${esc(current.q)}</div>
+    <div class="answer-block">
+      <div class="label">参考答案</div>
+      <div class="answer">${esc(cardFull.a)}</div>
+      ${att}${src}
+    </div>
+    ${body}
+  </div>`;
+  if (current.retry) document.getElementById('cont').onclick = () => { done++; next(); };
+  else document.querySelectorAll('.grades button').forEach(b => b.onclick = () => grade(+b.dataset.g));
+}
+
+async function grade(g) {
+  document.querySelectorAll('.grades button').forEach(b => b.disabled = true);
+  await api('/api/rate', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: current.id, grade: g, attempt: cardFull.attempt })
+  });
+  if (g === 1) { againCount++; queue.push(Object.assign({}, current, { retry: true })); }
+  done++;
+  next();
+}
+
+function renderDone() {
+  $progress.textContent = '';
+  api('/api/stats').then(s => {
+    const week = s.due_cumulative_week;
+    const leech = s.leeches.length
+      ? `<p class="stats-line">⚠ ${s.leeches.length} 张卡连续遗忘 ≥3 次（#${s.leeches.join(', #')}）——下次 /teach 时让 Claude 改写或重教</p>` : '';
+    $app.innerHTML = `<div class="panel center">
+      <div class="big">✅</div>
+      <h2>今日复习完成</h2>
+      <p>复习 ${total} 张，其中 ${againCount} 张忘了${againCount ? '（已重过一遍，明天再见）' : ''}<br>
+      明天到期 ${week[0]} 张，未来 7 天共 ${week[6]} 张</p>
+      ${leech}
+    </div>`;
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (!revealed || (current && current.retry)) return;
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+  if (['1','2','3','4'].includes(e.key)) grade(+e.key);
+});
+
+pin ? start().catch(() => {}) : renderPin(false);
+</script>
+</body>
+</html>
