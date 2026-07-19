@@ -83,12 +83,17 @@
   }
   input.pin:focus { outline: none; border-color: var(--accent); }
   .pin-btn { margin-top: 16px; max-width: 240px; margin-left: auto; margin-right: auto; display: block; width: 100%; }
+  a { color: var(--accent); }
+  header .course {
+    font-size: 13px; color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 20px; padding: 2px 10px;
+  }
 </style>
 </head>
 <body>
 <header>
   <h1>果木 · 复习</h1>
-  <span id="progress"></span>
+  <span><a class="course" href="course.html">📚 课程</a> <span id="progress"></span></span>
 </header>
 <main id="app"><div class="panel center"><p>加载中…</p></div></main>
 
@@ -152,6 +157,7 @@ function renderEmpty() {
     <div class="big">🎉</div>
     <h2>今天没有到期卡片</h2>
     <p>卡片库共 ${stats.total} 张<br>明天到期 ${week[0]} 张，未来 7 天共 ${week[6]} 张</p>
+    <p class="stats-line"><a href="course.html">📚 翻看课程与速查表</a></p>
     <p class="stats-line">想学新东西？回 Claude Code 里说 <kbd>/teach</kbd></p>
   </div>`;
 }

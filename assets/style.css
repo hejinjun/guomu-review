@@ -1,0 +1,229 @@
+/* guomu 课程共享样式 — 每一课都链接此文件，保持全课程外观一致 */
+
+:root {
+  --surface-1: #fcfcfb;
+  --page: #f9f9f7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --muted: #898781;
+  --gridline: #e1e0d9;
+  --baseline: #c3c2b7;
+  --series-1: #2a78d6;
+  --good: #006300;
+  --bad: #d03b3b;
+  --accent-wash: rgba(42, 120, 214, 0.08);
+  --border: rgba(11, 11, 11, 0.10);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-1: #1a1a19;
+    --page: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --muted: #898781;
+    --gridline: #2c2c2a;
+    --baseline: #383835;
+    --series-1: #3987e5;
+    --good: #0ca30c;
+    --bad: #e66767;
+    --accent-wash: rgba(57, 135, 229, 0.14);
+    --border: rgba(255, 255, 255, 0.10);
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text-primary);
+  font-family: Georgia, "Songti SC", "Noto Serif SC", "Source Han Serif SC", serif;
+  font-size: 17px;
+  line-height: 1.85;
+}
+
+main.lesson {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 5rem;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 2.2em 0 0.6em;
+}
+h1 { font-size: 1.7rem; margin-top: 0; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.05rem; }
+
+.lesson-meta {
+  color: var(--muted);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 2.5rem;
+}
+
+p { margin: 0.9em 0; }
+strong { font-weight: 600; }
+
+a { color: var(--series-1); text-decoration: none; border-bottom: 1px solid var(--gridline); }
+a:hover { border-bottom-color: var(--series-1); }
+
+blockquote {
+  margin: 1.4em 0;
+  padding: 0.1em 1.2em;
+  border-left: 3px solid var(--baseline);
+  color: var(--text-secondary);
+}
+
+code, pre {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.88em;
+}
+code {
+  background: var(--accent-wash);
+  padding: 0.12em 0.35em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1em 1.2em;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+pre code { background: none; padding: 0; }
+
+/* 提示框 */
+.note, .win {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.92rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9em 1.2em;
+  margin: 1.6em 0;
+  background: var(--surface-1);
+}
+.win { border-left: 3px solid var(--good); }
+.note { border-left: 3px solid var(--series-1); }
+
+/* 引用文献 */
+.cite {
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+/* 互动区块（demo、quiz 的容器） */
+.panel {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.3rem 1.4rem;
+  margin: 1.8em 0;
+}
+.panel h3 { margin-top: 0.2em; }
+
+button.action {
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--series-1);
+  border: none;
+  border-radius: 8px;
+  padding: 0.45em 1.1em;
+  cursor: pointer;
+}
+button.action:hover { filter: brightness(1.08); }
+button.ghost {
+  font: inherit;
+  color: var(--text-secondary);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45em 1.1em;
+  cursor: pointer;
+}
+
+input[type="range"] { accent-color: var(--series-1); }
+
+/* 概率条形图（配 assets/prob-bars.js） */
+.prob-bars { display: grid; gap: 6px; margin: 1em 0; }
+.prob-row {
+  display: grid;
+  grid-template-columns: 6.5em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+}
+.prob-label {
+  text-align: right;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color: var(--text-primary);
+}
+.prob-track {
+  height: 20px;
+  border-left: 2px solid var(--baseline);
+  position: relative;
+}
+.prob-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--series-1);
+  border-radius: 0 4px 4px 0;
+  transition: width 0.25s ease;
+}
+.prob-value {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.88rem;
+}
+.prob-row.sampled .prob-fill { outline: 2px solid var(--good); outline-offset: 1px; }
+
+/* Quiz（配 assets/quiz.js） */
+.quiz { margin: 1.8em 0; }
+.quiz .q { font-weight: 600; margin-bottom: 0.7em; }
+.quiz .opts { display: grid; gap: 8px; }
+.quiz .opts button {
+  font: inherit;
+  text-align: left;
+  padding: 0.6em 0.9em;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--page);
+  color: var(--text-primary);
+  cursor: pointer;
+  line-height: 1.6;
+}
+.quiz .opts button:hover { background: var(--accent-wash); }
+.quiz .opts button.correct { border-color: var(--good); background: var(--accent-wash); }
+.quiz .opts button.wrong { border-color: var(--bad); opacity: 0.6; }
+.quiz .explain {
+  display: none;
+  margin-top: 0.8em;
+  padding: 0.7em 1em;
+  border-left: 3px solid var(--good);
+  background: var(--page);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+.quiz.answered .explain { display: block; }
+
+/* 页脚导航 */
+.lesson-footer {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--gridline);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+@media print {
+  body { background: #fff; }
+  .panel button, .lesson-footer { display: none; }
+}
