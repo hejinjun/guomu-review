@@ -88,6 +88,15 @@
     font-size: 13px; color: var(--muted); text-decoration: none;
     border: 1px solid var(--border); border-radius: 20px; padding: 2px 10px;
   }
+  #filterbar {
+    width: 100%; max-width: 620px; padding: 0 24px; margin-top: 14px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .filter-tab {
+    flex: none; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+    background: var(--card); color: var(--muted); font: inherit; font-size: 13px; cursor: pointer;
+  }
+  .filter-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -95,6 +104,7 @@
   <h1>果木 · 复习</h1>
   <span><a class="course" href="course.html">📚 课程</a> <span id="progress"></span></span>
 </header>
+<div id="filterbar"></div>
 <main id="app"><div class="panel center"><p>加载中…</p></div></main>
 
 <script>
@@ -102,6 +112,7 @@ const $app = document.getElementById('app');
 const $progress = document.getElementById('progress');
 const BASE = 'https://wcqkjafveuprxxrnnqiu.supabase.co/functions/v1/review';
 let pin = localStorage.getItem('guomu_pin') || '';
+let courseFilter = localStorage.getItem('guomu_course') || null;
 let queue = [], done = 0, total = 0, againCount = 0, stats = null;
 let current = null, revealed = false, cardFull = null;
 
@@ -124,6 +135,7 @@ async function api(path, opts) {
 
 function renderPin(wrong) {
   $progress.textContent = '';
+  document.getElementById('filterbar').innerHTML = '';
   $app.innerHTML = `<div class="panel center">
     <div class="big">🔒</div>
     <h2>${wrong ? '口令不对，再试一次' : '输入访问口令'}</h2>
@@ -142,11 +154,31 @@ function renderPin(wrong) {
   input.onkeydown = e => { if (e.key === 'Enter') go(); };
 }
 
+function renderFilterBar() {
+  const bar = document.getElementById('filterbar');
+  const courses = Object.keys((stats && stats.by_course) || {});
+  if (courses.length < 2) { bar.innerHTML = ''; return; }
+  const tabs = [''].concat(courses); // '' = 全部
+  bar.innerHTML = tabs.map(c => {
+    const active = (courseFilter || '') === c;
+    const label = c ? c.toUpperCase() : '全部';
+    return `<button class="filter-tab${active ? ' active' : ''}" data-course="${esc(c)}">${label}</button>`;
+  }).join('');
+  bar.querySelectorAll('.filter-tab').forEach(b => b.onclick = () => {
+    courseFilter = b.dataset.course || null;
+    if (courseFilter) localStorage.setItem('guomu_course', courseFilter);
+    else localStorage.removeItem('guomu_course');
+    start().catch(() => {});
+  });
+}
+
 async function start() {
-  const s = await api('/api/session');
+  const qs = courseFilter ? ('?course=' + encodeURIComponent(courseFilter)) : '';
+  const s = await api('/api/session' + qs);
   stats = s.stats;
   queue = s.due;
   total = queue.length; done = 0; againCount = 0;
+  renderFilterBar();
   total ? next() : renderEmpty();
 }
 
