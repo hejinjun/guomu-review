@@ -249,6 +249,94 @@ input[type="range"] { accent-color: var(--series-1); }
 }
 .quiz.answered .explain { display: block; }
 
+/* 阶段折叠卡（施工流程等分阶段内容，纯 HTML details，打印友好） */
+.phases { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 1.8em 0; }
+.phase {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-1);
+  margin: 8px 0;
+  overflow: hidden;
+}
+.phase > summary {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 0.75em 1em;
+  cursor: pointer;
+  font-size: 0.95rem;
+  list-style: none;
+}
+.phase > summary::-webkit-details-marker { display: none; }
+.phase > summary:hover { background: var(--accent-wash); }
+.phase .no {
+  flex: none; font-size: 0.72rem; font-weight: 600; letter-spacing: .05em;
+  color: var(--series-1); background: var(--accent-wash);
+  border-radius: 20px; padding: 2px 9px;
+}
+.phase .nm { flex: 1; font-weight: 600; }
+.phase .cost { flex: none; color: var(--muted); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.phase .body { padding: 0.2em 1.15em 1em; font-size: 0.9rem; color: var(--text-secondary); }
+.phase .body p { margin: 0.5em 0; }
+.phase .body dl { margin: 0.5em 0; display: grid; grid-template-columns: 5.5em 1fr; gap: 4px 10px; }
+.phase .body dt { color: var(--muted); font-size: 0.82rem; }
+.phase .body dd { margin: 0; }
+.phase[data-locked] .nm::after {
+  content: "不可逆"; margin-left: 8px;
+  font-size: 0.7rem; color: var(--bad);
+  border: 1px solid var(--bad); border-radius: 4px; padding: 0 5px;
+  vertical-align: 1px; font-weight: 500;
+}
+
+/* 工序排序练习（配 assets/sequence-sort.js） */
+.seq-sort { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+.seq-pool { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.9em 0; }
+.seq-card {
+  font: inherit; font-size: 0.9rem;
+  padding: 0.5em 0.9em;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--page); color: var(--text-primary); cursor: pointer;
+}
+.seq-card:hover { background: var(--accent-wash); }
+.seq-card.used { display: none; }
+.seq-card.shake { border-color: var(--bad); animation: seq-shake .35s; }
+@keyframes seq-shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+ol.seq-done { margin: 0.4em 0; padding-left: 1.4em; font-size: 0.9rem; }
+ol.seq-done li { margin: 6px 0; }
+ol.seq-done .seq-t { font-weight: 600; }
+ol.seq-done .seq-why { display: block; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; }
+.seq-msg { font-size: 0.88rem; min-height: 3em; margin: 0.6em 0; }
+.seq-msg.ok { color: var(--good); }
+.seq-msg.no { color: var(--bad); }
+
+/* 通行余量模拟器（配 assets/clearance-sim.js） */
+.clearance-sim { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+.cs-svg { width: 100%; height: auto; }
+.cs-wall { fill: var(--baseline); }
+.cs-floor { fill: var(--accent-wash); }
+.cs-person { fill: var(--series-1); opacity: .75; }
+.cs-person.over { fill: var(--bad); }
+.cs-dim { stroke: var(--muted); stroke-width: 1; }
+.cs-dimlabel { fill: var(--text-primary); font-size: 12px; text-anchor: end;
+  font-family: ui-monospace, Menlo, monospace; }
+.cs-control { margin: 0.6em 0; position: relative; }
+.cs-control label { font-size: 0.88rem; color: var(--text-secondary); }
+.cs-control output { font-family: ui-monospace, Menlo, monospace; color: var(--text-primary); }
+.cs-control input { width: 100%; }
+.cs-marks { position: relative; height: 12px; margin-top: -4px; }
+.cs-mark { position: absolute; top: 0; width: 2px; height: 8px; background: var(--bad); }
+ul.cs-checks { list-style: none; padding: 0; margin: 0.6em 0 0; font-size: 0.9rem; }
+ul.cs-checks li { display: flex; gap: 10px; align-items: baseline; padding: 3px 0; }
+ul.cs-checks .cs-icon { flex: none; width: 1em; }
+ul.cs-checks .cs-label { flex: 1; }
+ul.cs-checks .cs-need { flex: none; color: var(--muted); font-size: 0.8rem;
+  font-variant-numeric: tabular-nums; }
+ul.cs-checks li.ok .cs-icon { color: var(--good); }
+ul.cs-checks li.no { color: var(--muted); }
+ul.cs-checks li.no .cs-icon { color: var(--bad); }
+
 /* 页脚导航 */
 .lesson-footer {
   margin-top: 4rem;
@@ -262,4 +350,6 @@ input[type="range"] { accent-color: var(--series-1); }
 @media print {
   body { background: #fff; }
   .panel button, .lesson-footer { display: none; }
+  /* 速查表要打印出来贴墙：展开由 assets/print-expand.js 负责，这里只管不要跨页断开 */
+  .phase { break-inside: avoid; }
 }
