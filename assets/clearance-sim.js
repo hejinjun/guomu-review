@@ -77,8 +77,10 @@ document.querySelectorAll(".clearance-sim").forEach((root) => {
     const slot = gap / n;
     for (let i = 0; i < n; i++) {
       const cy = yTop + slot * (i + 0.5);
+      // 一个人时居中；多人时前后错开，读起来像在错身
+      const dx = n === 1 ? 0 : (i % 2 ? px(depth) * 0.9 : -px(depth) * 0.9);
       svg.appendChild(svgEl("ellipse", {
-        cx: cx + (i % 2 ? px(depth) * 0.9 : -px(depth) * 0.9), cy,
+        cx: cx + dx, cy,
         rx: px(depth) / 2, ry: px(body) / 2,
         class: "cs-person" + (fits ? "" : " over"),
       }));
