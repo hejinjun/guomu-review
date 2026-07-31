@@ -304,11 +304,15 @@ input[type="range"] { accent-color: var(--series-1); }
 .ah-role { font-weight: 400; color: var(--muted); margin-left: 0.5em; font-size: 0.8rem; }
 .ah-cells { display: flex; gap: 3px; }
 .ah-cell {
+  position: relative; overflow: hidden;
   flex: 1; min-width: 0;
   border: 1px solid var(--border); border-radius: 6px;
   padding: 0.35em 0.2em; text-align: center;
 }
 .ah-cell.ah-top { border-color: var(--series-1); }
+.ah-fill { position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+  background: var(--series-1); }
+.ah-body { position: relative; }
 .ah-tok { display: block; font-size: 0.8rem; line-height: 1.4;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ah-pct { display: block; font-size: 0.7rem; color: var(--text-secondary);

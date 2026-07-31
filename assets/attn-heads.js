@@ -65,8 +65,11 @@ function renderAttnHeads(container, cfg) {
     weights.forEach((p, i) => {
       const c = document.createElement("div");
       c.className = "ah-cell" + (i === top ? " ah-top" : "");
-      c.style.background = `color-mix(in srgb, var(--series-1) ${(p * 100).toFixed(0)}%, transparent)`;
-      c.innerHTML = `<span class="ah-tok">${tokens[i]}</span><span class="ah-pct">${Math.round(p * 100)}%</span>`;
+      // 用一层带透明度的填充层表示权重（而非 color-mix：老 Safari 不支持）
+      // 绝对刻度（不按行内最大值拉伸）：权重散开的行看上去就该是淡的
+      c.innerHTML = `<span class="ah-fill" style="opacity:${(p * 0.6).toFixed(3)}"></span>` +
+        `<span class="ah-body"><span class="ah-tok">${tokens[i]}</span>` +
+        `<span class="ah-pct">${Math.round(p * 100)}%</span></span>`;
       cells.appendChild(c);
     });
     grid.appendChild(cells);
